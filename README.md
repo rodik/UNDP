@@ -43,4 +43,23 @@ data$value <- as.numeric(data$value)
 ```
 Ranking function
 ----------------------------------------------------------
-The core of this ranking function is a concept I often use within TSQL â
+The core of this ranking function is a concept I often use within TSQL, a [Window function](https://cran.r-project.org/web/packages/dplyr/vignettes/window-functions.html).
+```
+# ranking function returns chosen countries ranked by selected indicator
+rank <- function(undp, indi, countries) {
+    # filter by indicator
+    filtered <- subset(undp, indicator == indi)
+    
+    # group by year
+    grouped <- group_by(filtered, year)
+    
+    # add rank column
+    ranked <- mutate(grouped, rnk = min_rank(value))        
+    
+    # keep only chosen countries
+    ranked <- subset(ranked, country %in% countries)
+    
+    # return df
+    ranked
+}
+```
